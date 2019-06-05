@@ -1,0 +1,27 @@
+<html>
+<body>
+
+{% extends 'Reviews/base.html' %}
+
+{% block title %}
+<ul class="list-group" style="list-style-type: none;">
+<li class="list-group-item"><a href="{% url 'Reviews:college_detail' review.college.id %}">{{ review.college.name }}</a></li><br><br>
+{% endblock %}
+
+{% block body %}
+<li class="list-group-item">Rated {{ review.rating }}/5 by {{ review.user_name }} </li><br>
+<li>{{ review.pub_date }}</li>
+<br>
+<li class="list-group-item"> Placement Rating : {{ review.placement_rate }}
+    <br>
+    Academics Rating : {{ review.academic_rate }}
+    <br>
+    Infrastructure Rating : {{ review.infra_rate }}
+    <br>
+</li></ul>
+
+{{ review.description }}
+
+{% endblock %}
+</body>
+</html>

@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    {% load static %}
+    <link href="https://fonts.googleapis.com/css?family=Akronim|Stylish" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Gloria+Hallelujah|Lato" rel="stylesheet">
+
+
+    <link rel="stylesheet" href="{% static 'Reviews/css/style.css'%}">
+
+    <title>{% block title %}{%endblock %}</title>
+  </head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-5">
+  <a class="navbar-brand" href="{% url 'Reviews:searched' %}">College Recommendation System</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+
+<div class="container">
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav ml-auto">
+      <li class="nav-item active">
+        <a class="nav-link" href="{% url 'Reviews:login_user' %}">LogIn</a>
+      </li>
+      <li class="nav-item active">
+        <a class="nav-link" href="{% url 'Reviews:create_new_user' %}">SignUp</a>
+      </li>
+    </ul>
+  </div>
+
+
+</nav>
+    {% block body %}{%endblock %}
+
+
+ <div class="card">
+  <div class="card-header">
+    Search Colleges
+  </div>
+  <div class="card-body">
+     <div class="ui-widget">
+       <form action="{% url 'Reviews:searched' %}" method="post">
+        {% csrf_token %}
+        <label>College: </label>
+        <input type ="text" id="autocomplete-college" name="autocomplete-college">
+        <br><br><button type="submit">Search</button>
+      </form>
+  </div>
+</div>
+   
+
+
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.8.18/themes/base/jquery-ui.css" type="text/css" media="all" />
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js" type="text/javascript"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+    $("#autocomplete-college").on('keyup', function(){
+        var value = $(this).val();
+        $.ajax({
+            url: "{% url 'Reviews:autocomplete_college' %}",
+            data: {
+              'search': value
+            },
+            dataType: 'json',
+            success: function (data) {
+              console.log(data.list)
+                list = data.list;
+                $("#autocomplete-college").autocomplete({
+                source: list,
+                minLength: 1
+                });
+            }
+        });
+    });
+  });
+
+    //   keeps same width as box
+      jQuery.ui.autocomplete.prototype._resizeMenu = function () {
+          var ul = this.menu.element;
+          ul.outerWidth(this.element.outerWidth());
+        }
+</script>
+
+</body>
+</html>

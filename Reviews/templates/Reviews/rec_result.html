@@ -1,0 +1,46 @@
+<html>
+<body>
+
+{% extends 'Reviews/base.html' %}
+
+{% block title %}Recommendation result{% endblock %}
+
+
+
+{% block body %}
+
+<div  class="announcement-line" id="announcementLine">
+    <marquee  direction="left" id="announcementLinetext"> Why settle for mediocre college when you can get one of the best colleges!!!  </marquee>
+</div>
+
+<div  class="announcement-line" id="announcementLine">
+    <marquee  direction="right" id="announcementLinetext"> Top college recommendation for you:  </marquee>
+</div>
+
+
+ <div class="col-md-7">
+            <div class="container-fluid">
+ 
+             {% for col in best_clgs %}   
+            <h3>Name : </h3>
+                <a href="{% url 'Reviews:college_detail' col.college.id%}">{{ col.college }}</a>
+                <hr>
+            <h3>Caste : </h3>
+                {{ col.caste }}
+                <hr>
+            <h3>Department : </h3>
+                {{ col.dept }}
+                <hr>
+            <h3>Last year cutoff : </h3>
+                {{ col.score }}
+                <hr>
+                <br><br>
+            {% endfor %}            
+            </div>
+</div>
+
+
+{% endblock %}       
+
+</body>
+</html>

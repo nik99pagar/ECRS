@@ -1,0 +1,118 @@
+<html>
+<body>
+{% extends 'Reviews/base.html' %}
+{% block title %}{% endblock %}
+{% block body %}
+<img src={{ college.pic.url }} height="50%" width="100%"/><br><br><br>
+<i><h2 style="text-decoration: underline;  margin-left: 10px;">{{ college.name }}</h2></i>
+<i><h3 style="text-decoration: underline; margin-left: 10px;">{{ college.address }}</h3></i>
+<br><h4 style="margin-left: 10px;">NIRF RATING: {% if college.nirf_rating > 0 %}
+                        {{ college.nirf_rating }}
+                {% else %}
+                        N/A
+                {% endif %}
+</h4>
+<hr><br>
+<h3 style="margin-left: 10px;">Have a query?Clear them!! </h3>
+<br>
+<form action="{% url 'Reviews:req_query'%}" method="post" style="margin-left: 10px;">
+    {% csrf_token %}
+    <textarea name="qry"></textarea><input type="hidden" name="col" value="{{ college.name }}">
+    <br>
+    <button type="submit" style="width: 10%">Request</button>
+</form>
+<br>
+
+
+
+<hr>
+<div style="margin-left: 10px;">
+    
+    {% for dep in deps %}
+       <h3>{{dep }} </h3><br>
+           {% if dep.review_set.count > 0   %}
+                <h3>(Total = {{dep.avg_rating | floatformat}} rated)</h3>
+                <br>
+                <div  class="row">
+                    <div class="column" style="margin-left: 100px;">
+                        <h1>(Placement = {{dep.avg_p_rating | floatformat}})</h1>
+                    </div>
+                    <div class="column" style="margin-left: 100px;">
+                        <h1>(Academics = {{dep.avg_a_rating | floatformat}})</h1>
+                    </div>
+                    <div class="column" style="margin-left: 100px;">
+                        <h1>(Infrastructure = {{dep.avg_i_rating | floatformat}})</h1>
+                    </div>
+                </div>
+                <div>
+                    <br>{{ dep.review_set.count }} Reviews: <br>
+                    {% for review in dep.review_set.all %}
+                    <div>
+                        <br> Description: <em>{{ review.description }}</em>
+                        <h5>Rated {{review.rating }}/5 by user {{ review.user_name }}</h5>
+                        <h4><a href="{% url 'Reviews:review_detail' review.id%}">
+                        Read more..
+                        </a></h4>
+                    </div>
+    {% endfor %}
+                </div>
+            {% else %}
+                <h4>No Reviews for this department yet</h4>
+            {% endif %}
+    <hr>
+    {% endfor %}
+</div>
+
+<br>
+<hr>
+
+<div style="margin-left: 10px;">
+
+{%  if college.pendingquery_set.all %}
+<h3>Pending Queries....</h3><br><br>
+{% for qry in college.pendingquery_set.all %}
+<h4> {{ qry.qsn }} </h4>
+{% if college.name|stringformat:"s" == user_clg|stringformat:"s" %}
+<form action="{% url 'Reviews:answer_query'%}" method="post" >
+    {% csrf_token %}
+    <input type="hidden" value="{{ qry.qsn }}" name="qstn">
+    <input type="hidden" value="{{ college.name }}" name="colg">
+    <button type="submit" style="width: 10%;">Answer</button>
+</form>
+{% endif %}
+        <br>
+{% endfor %}
+{% else %}
+<h4>No Pending Queries for this college yet</h4>
+{% endif %}
+
+<br><br>
+<hr>
+{%  if college.answeredqueries_set.all %}
+<h3>Answered Queries....</h3><br><br>
+{% for qry in college.answeredqueries_set.all %}
+<h4> {{ qry.qsn }} </h4>
+<h4> {{ qry.ans }} </h4>
+        <br>
+{% endfor %}
+{% else %}
+<h4>No Answered Queries for this college yet</h4>
+{% endif %}
+
+<br>
+<hr>
+{% if college.name|stringformat:"s" == user_clg|stringformat:"s" %}
+<h5>Add your review about this college </h5>
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+<form action="{% url 'Reviews:add_review' college.id %}" method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" style="width: 10%;" value="Add" />
+</form>
+    {% endif %}
+</div>
+{% endblock %}
+
+</body>
+</html>
