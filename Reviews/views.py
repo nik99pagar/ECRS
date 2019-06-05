@@ -39,13 +39,14 @@ def recommend(request):
 
 
 def answer_query(request):
-    qsn=request.POST['qstn']
-    col=request.POST['colg']
-    context={
-        'qsn': qsn,
-        'col': col,
-    }
-    return render(request,'Reviews/answer.html',context)
+	qsn=request.POST['qstn']
+	col=request.POST['colg']
+	context={
+		'qsn': qsn,
+		'col': col,
+	}
+	print(qsn,col)
+	return render(request,'Reviews/answer.html',context)
 
 
 def submit_query(request):
@@ -101,7 +102,6 @@ def req_query(request):
     return render(request, 'Reviews/college_detail.html',{'college': clg, 'deps': deps, 'form': form, 'user_clg': user_clg})
 
 
-
 def searched(request):
 	if request.method == "POST":
 		clg_name = request.POST['autocomplete-college']
@@ -125,7 +125,7 @@ def searched(request):
 def autocomplete_college(request):
 	if request.is_ajax():
 		q=request.GET.get('search', None)
-		queryset = College.objects.filter(name__startswith=q)
+		queryset = College.objects.filter(name__contains=q)
 		list = []
 		for i in queryset:
 			list.append(i.name)

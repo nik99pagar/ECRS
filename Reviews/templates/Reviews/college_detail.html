@@ -1,4 +1,46 @@
 <html>
+
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+
+.tab {
+  overflow: hidden;
+  border: 1px solid #ccc;
+  background-color: #f1f1f1;
+}
+
+/* Style the buttons inside the tab */
+.tab button {
+  background-color: inherit;
+  float: left;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 14px 16px;
+  transition: 0.3s;
+  font-size: 17px;
+}
+
+/* Change background color of buttons on hover */
+.tab button:hover {
+  background-color: #ddd;
+}
+
+/* Create an active/current tablink class */
+.tab button.active {
+  background-color: #ccc;
+}
+
+/* Style the tab content */
+.tabcontent {
+  display: none;
+  padding: 6px 12px;
+  border: 1px solid #ccc;
+  border-top: none;
+}
+</style>
+</head>
 <body>
 {% extends 'Reviews/base.html' %}
 {% block title %}{% endblock %}
@@ -12,8 +54,15 @@
                         N/A
                 {% endif %}
 </h4>
-<hr><br>
-<h3 style="margin-left: 10px;">Have a query?Clear them!! </h3>
+<hr>
+<div class="tab">
+  <button class="tablinks" onclick="openCity(event, 'Reviews')"   id="defaultOpen">Reviews</button>
+  <button class="tablinks" onclick="openCity(event, 'Queries')" >Queries</button>
+  <button class="tablinks" onclick="openCity(event, 'Add Review')">Add your Review</button>
+</div>
+
+<div id="Queries" class="tabcontent">
+<h3 style="margin-left: 10px;">Have some queries?Clear them!! </h3>
 <br>
 <form action="{% url 'Reviews:req_query'%}" method="post" style="margin-left: 10px;">
     {% csrf_token %}
@@ -21,57 +70,14 @@
     <br>
     <button type="submit" style="width: 10%">Request</button>
 </form>
+    <hr style="height:1px;border:none;color:#333;background-color:#333;" />
 <br>
 
-
-
-<hr>
 <div style="margin-left: 10px;">
-    
-    {% for dep in deps %}
-       <h3>{{dep }} </h3><br>
-           {% if dep.review_set.count > 0   %}
-                <h3>(Total = {{dep.avg_rating | floatformat}} rated)</h3>
-                <br>
-                <div  class="row">
-                    <div class="column" style="margin-left: 100px;">
-                        <h1>(Placement = {{dep.avg_p_rating | floatformat}})</h1>
-                    </div>
-                    <div class="column" style="margin-left: 100px;">
-                        <h1>(Academics = {{dep.avg_a_rating | floatformat}})</h1>
-                    </div>
-                    <div class="column" style="margin-left: 100px;">
-                        <h1>(Infrastructure = {{dep.avg_i_rating | floatformat}})</h1>
-                    </div>
-                </div>
-                <div>
-                    <br>{{ dep.review_set.count }} Reviews: <br>
-                    {% for review in dep.review_set.all %}
-                    <div>
-                        <br> Description: <em>{{ review.description }}</em>
-                        <h5>Rated {{review.rating }}/5 by user {{ review.user_name }}</h5>
-                        <h4><a href="{% url 'Reviews:review_detail' review.id%}">
-                        Read more..
-                        </a></h4>
-                    </div>
-    {% endfor %}
-                </div>
-            {% else %}
-                <h4>No Reviews for this department yet</h4>
-            {% endif %}
-    <hr>
-    {% endfor %}
-</div>
-
-<br>
-<hr>
-
-<div style="margin-left: 10px;">
-
 {%  if college.pendingquery_set.all %}
 <h3>Pending Queries....</h3><br><br>
 {% for qry in college.pendingquery_set.all %}
-<h4> {{ qry.qsn }} </h4>
+    <h4><b>Q)</b>  {{ qry.qsn }} </h4>
 {% if college.name|stringformat:"s" == user_clg|stringformat:"s" %}
 <form action="{% url 'Reviews:answer_query'%}" method="post" >
     {% csrf_token %}
@@ -79,28 +85,70 @@
     <input type="hidden" value="{{ college.name }}" name="colg">
     <button type="submit" style="width: 10%;">Answer</button>
 </form>
-{% endif %}
-        <br>
+{% endif %}<br>
 {% endfor %}
 {% else %}
 <h4>No Pending Queries for this college yet</h4>
 {% endif %}
-
-<br><br>
-<hr>
+    <hr style="height:1px;border:none;color:#333;background-color:#333;" />
+    <br>
 {%  if college.answeredqueries_set.all %}
 <h3>Answered Queries....</h3><br><br>
 {% for qry in college.answeredqueries_set.all %}
-<h4> {{ qry.qsn }} </h4>
-<h4> {{ qry.ans }} </h4>
-        <br>
+<h4><b>Q)</b> {{ qry.qsn }} </h4>
+<h4><b>A)</b> {{ qry.ans }} </h4><br>
 {% endfor %}
 {% else %}
 <h4>No Answered Queries for this college yet</h4>
 {% endif %}
+<br><br>
+<hr>
+</div>
+</div>
 
+
+<div id="Reviews" class="tabcontent">
+<div style="margin-left: 10px;">
+    {% for dep in deps %}
+    <h3><u>Department:</u> {{dep }} </h3><br>
+           {% if dep.review_set.count > 0   %}
+                <h3>Total = {{dep.avg_rating | floatformat}} rated</h3>
+                <br>
+                <div  class="row">
+                    <div class="column" style="margin-left: 100px;">
+                        <h4>(Placement = {{dep.avg_p_rating | floatformat}})</h4>
+                    </div>
+                    <div class="column" style="margin-left: 100px;">
+                        <h4>(Academics = {{dep.avg_a_rating | floatformat}})</h4>
+                    </div>
+                    <div class="column" style="margin-left: 100px;">
+                        <h4>(Infrastructure = {{dep.avg_i_rating | floatformat}})</h4>
+                    </div>
+                </div>
+                <div>
+                    <br>{{ dep.review_set.count }} Reviews: <br>
+                    {% for review in dep.review_set.all %}
+                    <div>
+                        <br> Description: <em>{{ review.description }}</em>
+                        <h5>Rated {{review.rating }}/5 by user:  <i>{{ review.user_name }}</i></h5>
+                        <h4><a href="{% url 'Reviews:review_detail' review.id%}">
+                        Read more..
+                        </a></h4>
+                    </div>
+    {% endfor %}
+                </div>
+            {% else %}
+                <h5>No Reviews for this department yet</h5>
+            {% endif %}
+    <hr style="height:1px;border:none;color:#222;background-color:#333;" />
+    <br>
+    {% endfor %}
+</div>
 <br>
 <hr>
+</div>
+
+<div id="Add Review" class="tabcontent">
 {% if college.name|stringformat:"s" == user_clg|stringformat:"s" %}
 <h5>Add your review about this college </h5>
 {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
@@ -110,9 +158,35 @@
     {{ form.as_p }}
     <input type="submit" style="width: 10%;" value="Add" />
 </form>
+    {% else %}
+    {% if user.is_authenticated%}
+        <h4>You can't review this college as you are a registered student of <a href="{% url 'Reviews:college_detail' user_clg.id%}">{{ user_clg }}</a> !!!!</h4>
+    {% else %}
+        <h4>You can't review this college as you are a guest user</h4>
+    {% endif %}
     {% endif %}
 </div>
-{% endblock %}
 
+
+
+<script>
+
+function openCity(evt, cityName) {
+  var i, tabcontent, tablinks;
+  tabcontent = document.getElementsByClassName("tabcontent");
+  for (i = 0; i < tabcontent.length; i++) {
+    tabcontent[i].style.display = "none";
+  }
+  tablinks = document.getElementsByClassName("tablinks");
+  for (i = 0; i < tablinks.length; i++) {
+    tablinks[i].className = tablinks[i].className.replace(" active", "");
+  }
+  document.getElementById(cityName).style.display = "block";
+  evt.currentTarget.className += " active";
+}
+document.getElementById("defaultOpen").click();
+
+</script>
+{% endblock %}
 </body>
 </html>

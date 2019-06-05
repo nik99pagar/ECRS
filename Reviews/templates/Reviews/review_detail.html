@@ -10,7 +10,7 @@
 
 {% block body %}
 <li class="list-group-item">Rated {{ review.rating }}/5 by {{ review.user_name }} </li><br>
-<li>{{ review.pub_date }}</li>
+<li class="list-group-item">{{ review.pub_date }}</li>
 <br>
 <li class="list-group-item"> Placement Rating : {{ review.placement_rate }}
     <br>
@@ -18,10 +18,10 @@
     <br>
     Infrastructure Rating : {{ review.infra_rate }}
     <br>
-</li></ul>
 
+<hr>
 {{ review.description }}
-
+</li></ul>
 {% endblock %}
 </body>
 </html>
