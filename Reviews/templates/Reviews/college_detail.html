@@ -4,6 +4,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
 
+td {
+ padding: 10px 0
+}
+
 .tab {
   overflow: hidden;
   border: 1px solid #ccc;
@@ -66,16 +70,17 @@
 <br>
 <form action="{% url 'Reviews:req_query'%}" method="post" style="margin-left: 10px;">
     {% csrf_token %}
-    <textarea name="qry"></textarea><input type="hidden" name="col" value="{{ college.name }}">
+    <textarea name="qry" rows="4" cols="50"></textarea><input type="hidden" name="col" value="{{ college.name }}">
     <br>
     <button type="submit" style="width: 10%">Request</button>
+
 </form>
     <hr style="height:1px;border:none;color:#333;background-color:#333;" />
 <br>
 
 <div style="margin-left: 10px;">
 {%  if college.pendingquery_set.all %}
-<h3>Pending Queries....</h3><br><br>
+<h4>Pending Queries: </h4><br><br>
 {% for qry in college.pendingquery_set.all %}
     <h4><b>Q)</b>  {{ qry.qsn }} </h4>
 {% if college.name|stringformat:"s" == user_clg|stringformat:"s" %}
@@ -93,7 +98,7 @@
     <hr style="height:1px;border:none;color:#333;background-color:#333;" />
     <br>
 {%  if college.answeredqueries_set.all %}
-<h3>Answered Queries....</h3><br><br>
+<h4>Answered Queries:</h4><br><br>
 {% for qry in college.answeredqueries_set.all %}
 <h4><b>Q)</b> {{ qry.qsn }} </h4>
 <h4><b>A)</b> {{ qry.ans }} </h4><br>
@@ -110,7 +115,8 @@
 <div id="Reviews" class="tabcontent">
 <div style="margin-left: 10px;">
     {% for dep in deps %}
-    <h3><u>Department:</u> {{dep }} </h3><br>
+    <br><br>
+    <h3><u>Department:</u> <font color="red">{{dep }} </font></h3><br>
            {% if dep.review_set.count > 0   %}
                 <h3>Total = {{dep.avg_rating | floatformat}} rated</h3>
                 <br>
@@ -140,23 +146,29 @@
             {% else %}
                 <h5>No Reviews for this department yet</h5>
             {% endif %}
+    <br><br>
     <hr style="height:1px;border:none;color:#222;background-color:#333;" />
-    <br>
     {% endfor %}
 </div>
 <br>
 <hr>
 </div>
 
-<div id="Add Review" class="tabcontent">
+<div id="Add Review" class="tabcontent" align="center">
 {% if college.name|stringformat:"s" == user_clg|stringformat:"s" %}
-<h5>Add your review about this college </h5>
+<h4><u>Add your review about this college: </u></h4><br><br>
 {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
 
 <form action="{% url 'Reviews:add_review' college.id %}" method="post">
     {% csrf_token %}
-    {{ form.as_p }}
-    <input type="submit" style="width: 10%;" value="Add" />
+    <fieldset style="border:2px">
+    <legend>ReviewForm</legend>
+    <table>
+    {{ form.as_table }}
+    </table>
+    <br>
+<button type="submit" style="width: 10%">Add</button>
+    </fieldset>
 </form>
     {% else %}
     {% if user.is_authenticated%}

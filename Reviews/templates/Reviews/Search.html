@@ -15,7 +15,16 @@
 
     <link rel="stylesheet" href="{% static 'Reviews/css/style.css'%}">
 
-    <title>{% block title %}{%endblock %}</title>
+    <style>
+        .wrapper {
+    text-align: center;
+    }
+
+    .button {
+     position: absolute;
+        top: 50%;
+    }
+    </style>
   </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-5">
@@ -37,7 +46,7 @@
     </ul>
   </div>
 
-
+</div>
 </nav>
     {% block body %}{%endblock %}
 
@@ -52,7 +61,10 @@
         {% csrf_token %}
         <label>College: </label>
         <input type ="text" id="autocomplete-college" name="autocomplete-college">
-        <br><br><button type="submit">Search</button>
+        <br><br>
+           <div class="wrapper">
+           <button type="submit">Search</button>
+           </div>
       </form>
   </div>
 </div>

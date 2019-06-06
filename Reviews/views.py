@@ -151,7 +151,7 @@ def review_detail(request,review_id):
 
 
 def college_list(request):
-	college_list=College.objects.order_by('-name')
+	college_list=College.objects.order_by('name')
 	context={'college_list':college_list}
 	return render(request,'Reviews/college_list.html',context)
 
